@@ -1,0 +1,16 @@
+- name: database | Create responsefile for database configuration
+  template: src=dbca-create-db.rsp.{{ db_version }}.j2 dest={{ oracle_rsp_stage }}/{{ oracle_dbca_rsp }}
+  become: true
+  become_user: "{{ oracle_user }}"
+  when: create_database
+  tags: responsefile_dbca, database_install
+
+- name: database | Create database
+  shell: "{{ oracle_home_db }}/bin/dbca -createdatabase -responseFile {{ oracle_rsp_stage }}/{{ oracle_dbca_rsp }} -silent"
+  args:
+      creates: "{{ oracle_home_db }}/network/admin/database.ora"
+  become: true
+  become_user: "{{ oracle_user }}"
+  when: create_database
+  tags: database_install
+
